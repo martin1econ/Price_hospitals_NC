@@ -39,9 +39,6 @@ concept_data <- read_csv(path_concept)
 hospital_data <- read_csv(path_hospital)
 price_data <- read_csv(path_price)
 
-View(concept_data)
-View(hospital_data)
-View(price_data)
 
 #1 Look into your data: 
 
@@ -49,16 +46,23 @@ View(concept_data)
 View(hospital_data)
 View(price_data)
 
-#only quantitative column descriptive statistics 
-## Data heavily skewed right (mean= 41k, median= 900)
-## Max seems excessive, seems to be in the billions - same with standard deviation 
+## The are more unique concepts in price data set than in  concept data
+## explanation from online
+## EULA to acquire missing concepts, may not be allowed to share them publicly 
+
+print(paste("From price dataset: ",length(unique(price_data$concept_id))))
+print(paste("From concept dataset:",length(unique(concept_data$concept_id))))
+
+## Leftjoin datasets on unique IDs, with price on left--------------------------
+
 
 ## Alot of the most expensive procedures are "max" price type 
 describe(price_data$amount)
 
-# (amounts) 118 above 1mill, 52 above 10mill, 12 above 100mill 
-price_100mill <- price_data %>%
-  filter(amount > 100000000)
+# amount is the only quantitative column descriptive statistics 
+## Data heavily skewed right (mean= 41k, median= 900)
+## Max seems excessive, seems to be in the billions - same with standard deviation 
+
 
 ## Alot of the most expensive procedures are "max" price type
 ## see data instructions:
@@ -67,17 +71,7 @@ price_100mill <- price_data %>%
 # max: this is the maximum negotiated rate by an insurance company in the hospital network.
 # min: this is the minimum negotiated rate by an insurance company in the hospital network
 
-## how many procedures are above 1mill, 10mill, 100mill
-# what are these procedures that cost that much, build df with amount/concept
-expensive_procedures <- left_join(price_1mill, concept_data, by='concept_id')
-#make amounts more readable, create column in millions
-expensive_procedures <- expensive_procedures %>% 
-  mutate(amount_in_mills = amount/1000000)
-#only relevant columns
-expensive_procedures <- expensive_procedures %>%
-  select(hospital_id, price, amount_in_mills, concept_name)
-#round up millions
-expensive_procedures$amount_in_mills <- round(expensive_procedures$amount_in_mills)
+
 
 ## how many data amounts do we have for max vs min vs gross vs cash
 count_price <- price_data %>%
@@ -85,12 +79,8 @@ count_price <- price_data %>%
   count()
 print(count_price)
 
-## The are more unique concepts in price data set than in  concept data
-## explanation from online
-## EULA to acquire missing concepts, may not be allowed to share them publicly 
+## Keep only gross and cash, min and max seem like hypothetical ---------------
 
-print(length(unique(price_data$concept_id)))
-print(length(unique(concept_data$concept_id)))
 
 #2 Check the data type of each column
 
