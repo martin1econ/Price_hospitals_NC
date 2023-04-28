@@ -8,6 +8,11 @@
 # If the IMR is decided in an enrollee's favor,
 # the health plan must authorize the service or treatment requested.
 
+
+ ## CREATE PRICE REFERENCE CHECKER AND STORAGE
+ ## PROVIDE REFERENCE PRICING FOR PROCEDURES AND STORE NEW TRANSSACTIONS
+ ## WITH GUI
+
 install.packages("sqldf")
 
 ########################### Libraries  ######################
