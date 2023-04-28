@@ -8,6 +8,7 @@
 # If the IMR is decided in an enrollee's favor,
 # the health plan must authorize the service or treatment requested.
 
+install.packages("sqldf")
 
 # Libraries
 
@@ -24,8 +25,8 @@ library("sys")
 #for graphing
 library("ggplot2")
 
-#for model
-library("psych")
+#for sql
+library("sqldf")
 
 path_desktop <- file.path("C:", "Users", "Martin", "Desktop")
 path_project <- file.path(path_desktop, "R_projects", "projects")
@@ -46,6 +47,18 @@ View(concept_data)
 View(hospital_data)
 View(price_data)
 
+str(concept_data)
+str(hospital_data)
+str(price_data)
+
+concept_data$concept_id <- as.character(concept_data$concept_id)
+price_data$concept_id <- as.character(price_data$concept_id)
+price_data$hospital_id <- as.character(price_data$hospital_id)
+hospital_data$hospital_id <- as.character(hospital_data$hospital_id)
+
+
+
+
 ## The are more unique concepts in price data set than in  concept data
 ## explanation from online
 ## EULA to acquire missing concepts, may not be allowed to share them publicly 
@@ -54,66 +67,17 @@ print(paste("From price dataset: ",length(unique(price_data$concept_id))))
 print(paste("From concept dataset:",length(unique(concept_data$concept_id))))
 
 ## Leftjoin datasets on unique IDs, with price on left--------------------------
+# Using dplyr - left join multiple columns
+#df2 <- emp_df %>% left_join( dept_df, 
+ #                            by=c('dept_id','dept_branch_id'))
+medical_data <- left_join(price_data, concept_data, by = "concept_id")
 
+
+medical_data <- left_join(medical_data, hospital_data, by = "hospital_id")
 
 ## Alot of the most expensive procedures are "max" price type 
 describe(price_data$amount)
 
-# amount is the only quantitative column descriptive statistics 
-## Data heavily skewed right (mean= 41k, median= 900)
-## Max seems excessive, seems to be in the billions - same with standard deviation 
-
-
-## Alot of the most expensive procedures are "max" price type
-## see data instructions:
-# gross: this is often the top line item that the hospital never actually charges
-# cash: this is the self-pay discounted price you would pay without insurance
-# max: this is the maximum negotiated rate by an insurance company in the hospital network.
-# min: this is the minimum negotiated rate by an insurance company in the hospital network
-
-
-
-## how many data amounts do we have for max vs min vs gross vs cash
-count_price <- price_data %>%
-  group_by(price) %>%
-  count()
-print(count_price)
-
-## Keep only gross and cash, min and max seem like hypothetical ---------------
-
-
-#2 Check the data type of each column
-
-str(price_data)
-str(concept_data)
-str(hospital_data)
-
-
-#3 Look at the proportion of missing data
-
-sum(is.na(price_data))
-sum(is.na(concept_data))
-sum(is.na(hospital_data))
-
-#hospital data has 30 missing values 
-
-for (i in 1:length(colnames(hospital_data))) {
-  print(paste(colnames(hospital_data)[i],": ", sum(is.na(hospital_data[,i]))))
-}
-#disclosure is not important for the purposes of our analysis 
-
-
-#4 If you have columns of strings, check for trailing white spaces
-
-#5 Dealing with Missing Values (NaN Values)
-
-##drop column with missing values
-
-#6 Extracting more information from your dataset to get more variables
-
-#7 Check the unique values of columns
-
-#8 join datasets
 
 
 
