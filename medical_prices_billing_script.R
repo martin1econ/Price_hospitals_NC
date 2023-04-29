@@ -14,6 +14,7 @@
  ## WITH GUI
 
 install.packages("sqldf")
+install.packages("shinythemes")
 
 ########################### Libraries  ######################
 
@@ -38,6 +39,7 @@ library("sqldf")
 
 #GUI
 library("shiny")
+library("shinythemes")
 
 ########################### Paths, load data ############################
 
@@ -125,5 +127,8 @@ subset_cheap <- left_join(z, concept_data, by = "concept_id")
 View(subset_expensive)
 View(subset_cheap)
 
+#ui <- pass
+#server <- pass
 
 
+#shinyApp(ui, server)
